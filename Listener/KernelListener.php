@@ -12,6 +12,7 @@ namespace Yucca\PrerenderBundle\Listener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Yucca\PrerenderBundle\Event\RenderAfterEvent;
@@ -97,22 +98,26 @@ class KernelListener
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      * @return bool
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
+
         $request = $event->getRequest();
+
 
         if (!$event->isMasterRequest()) {
             return false;
         }
 
+
         //Check if we have to prerender page
         $eventshouldPrerender = new ShouldPrerenderEvent($request);
-        $this->eventDispatcher->dispatch(Events::shouldPrerenderPage, $eventshouldPrerender);
+        $this->eventDispatcher->dispatch($eventshouldPrerender, Events::shouldPrerenderPage);
 
         $shouldPrerender = $eventshouldPrerender->getShouldPrerender();
+
         if (is_null($shouldPrerender)) {
             //Check if we have to prerender page
             if (!$this->rules->shouldPrerenderPage($request)) {
@@ -121,6 +126,7 @@ class KernelListener
         } elseif (false === $shouldPrerender) {
             return false;
         }
+
 
         $event->stopPropagation();
 
@@ -134,7 +140,7 @@ class KernelListener
 
         $eventBefore = new RenderBeforeEvent($request, $uri);
         // @codingStandardsIgnoreStart
-        $this->eventDispatcher->dispatch(Events::onBeforeRequest, $eventBefore);
+        $this->eventDispatcher->dispatch($eventBefore, Events::onBeforeRequest);
         // @codingStandardsIgnoreEnd
 
         //Check if event get back a response
@@ -162,7 +168,7 @@ class KernelListener
         //Dispatch event to save response
         if ($event->getResponse()) {
             $eventAfter = new RenderAfterEvent($request, $event->getResponse());
-            $this->eventDispatcher->dispatch(Events::onAfterRequest, $eventAfter);
+            $this->eventDispatcher->dispatch($eventAfter, Events::onAfterRequest);
         }
 
         return true;

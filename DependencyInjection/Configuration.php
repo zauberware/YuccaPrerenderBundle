@@ -67,9 +67,9 @@ class Configuration implements ConfigurationInterface
     // you can add them in your configuration
     // But no guarantees about cloaking effects !
     protected $defaultCrawlerUserAgents = array(
-        //'googlebot',
-        //'yahoo',
-        //'bingbot',
+        // 'googlebot',
+        // 'yahoo',
+        // 'bingbot',
         'baiduspider',
         'facebookexternalhit',
         'twitterbot'

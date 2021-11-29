@@ -52,7 +52,7 @@ class ShouldPrerender
      * @return bool
      */
     public function shouldPrerenderPage(Request $request)
-    {
+    {   
         //if it contains _escaped_fragment_, show prerendered page
         if (null !== $request->query->get('_escaped_fragment_')) {
             return true;
