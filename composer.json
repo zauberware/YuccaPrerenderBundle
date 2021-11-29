@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=7",
-        "symfony/framework-bundle": "~5.*",
+        "symfony/framework-bundle": ">3",
         "psr/log": "~1.0"
     },
     "require-dev": {
